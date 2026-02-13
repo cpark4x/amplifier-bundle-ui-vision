@@ -1,0 +1,31 @@
+bundle:
+  name: ui-vision-behavior
+  version: 0.1.0
+  description: Visual UI testing capability with Playwright MCP vision integration
+
+tools:
+  - module: tool-mcp
+    source: git+https://github.com/microsoft/amplifier-module-tool-mcp@main
+    config:
+      servers:
+        playwright:
+          command: npx
+          args:
+            - "-y"
+            - "@playwright/mcp@latest"
+            - "--caps=vision"
+            - "--headless"
+            - "--image-responses"
+            - "allow"
+          description: "Playwright browser automation with vision capabilities"
+      max_content_size: 50000
+
+agents:
+  include:
+    - ui-vision:visual-auditor
+    - ui-vision:regression-checker
+    - ui-vision:accessibility-scanner
+
+context:
+  include:
+    - ui-vision:context/ui-vision-awareness.md

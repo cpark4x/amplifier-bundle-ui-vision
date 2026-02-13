@@ -1,0 +1,51 @@
+name: regression-check
+description: Visual regression check - inspect current UI for unintended visual changes
+version: 1.0.0
+
+inputs:
+  url:
+    description: URL of the running web app to check
+    required: true
+  pages:
+    description: Comma-separated list of paths to check
+    default: "/"
+  context:
+    description: What changed recently (e.g., "updated CSS for buttons", "refactored header component")
+    default: ""
+
+steps:
+  - id: check
+    agent: ui-vision:regression-checker
+    instruction: |
+      Check the web application at {{ url }} for visual regressions.
+
+      Pages to check: {{ pages }}
+      Recent changes context: {{ context }}
+
+      For each page:
+      1. Navigate to the page
+      2. Take a screenshot - describe everything you see
+      3. Get the accessibility tree snapshot
+      4. Look for common regression patterns:
+         - Broken layouts (overflow, misalignment, wrapping)
+         - Missing styles (unstyled elements, wrong colors)
+         - Z-index problems (elements hidden behind others)
+         - Font fallbacks (wrong fonts rendering)
+         - Broken images or icons
+         - State issues (hover/focus/active states wrong)
+      5. If recent changes context was provided, focus especially on areas
+         likely affected by those changes
+
+      Return PASS (no regressions) or FAIL (regressions found) with details.
+
+  - id: report
+    instruction: |
+      Based on the regression check results:
+
+      {{ steps.check.result }}
+
+      Provide a clear summary:
+      1. PASS/FAIL verdict
+      2. If FAIL: list each regression with severity and suggested fix
+      3. Pages that look correct (confirmation)
+      4. Confidence level in the assessment

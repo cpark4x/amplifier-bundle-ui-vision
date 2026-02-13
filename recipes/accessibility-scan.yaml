@@ -1,0 +1,52 @@
+name: accessibility-scan
+description: WCAG-focused accessibility analysis using visual and structural inspection
+version: 1.0.0
+
+inputs:
+  url:
+    description: URL of the running web app to scan
+    required: true
+  pages:
+    description: Comma-separated list of paths to scan
+    default: "/"
+  level:
+    description: WCAG conformance level to check against (A, AA, AAA)
+    default: "AA"
+
+steps:
+  - id: scan
+    agent: ui-vision:accessibility-scanner
+    instruction: |
+      Perform an accessibility scan of the web application at {{ url }}.
+
+      Pages to scan: {{ pages }}
+      Target conformance level: WCAG 2.1 {{ level }}
+
+      For each page:
+      1. Navigate to the page
+      2. Take a screenshot for visual analysis (contrast, sizing, spacing)
+      3. Get the accessibility tree for structural analysis (labels, roles, hierarchy)
+      4. Tab through all interactive elements - note focus order and visibility
+      5. Check against WCAG 2.1 {{ level }} criteria:
+         - Perceivable: text alternatives, contrast, text resize, non-text contrast
+         - Operable: keyboard access, focus order, focus visible
+         - Understandable: labels, error identification
+         - Robust: proper roles, names, values
+      6. Rate each issue by severity
+
+      Provide a detailed accessibility report for every page scanned.
+
+  - id: report
+    instruction: |
+      Based on the accessibility scan results:
+
+      {{ steps.scan.result }}
+
+      Create an actionable accessibility report:
+      1. Estimated conformance level (AA / Partial AA / Below AA)
+      2. Critical issues that must be fixed (blocking for users with disabilities)
+      3. Major issues that should be fixed (significant barriers)
+      4. Minor issues (improvements for better experience)
+      5. What's done well (positive patterns to maintain)
+      6. Limitations of this analysis (recommend supplementing with axe-core, Lighthouse)
+      7. Priority fix order (quick wins first, then high-impact changes)

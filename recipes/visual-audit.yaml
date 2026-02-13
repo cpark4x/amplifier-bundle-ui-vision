@@ -1,0 +1,45 @@
+name: visual-audit
+description: Comprehensive visual audit of a running web application
+version: 1.0.0
+
+inputs:
+  url:
+    description: URL of the running web app to audit
+    required: true
+  pages:
+    description: Comma-separated list of paths to check (e.g., "/,/dashboard,/settings")
+    default: "/"
+  viewport:
+    description: Viewport size (e.g., "1280x720", "mobile", "tablet")
+    default: "1280x720"
+
+steps:
+  - id: audit
+    agent: ui-vision:visual-auditor
+    instruction: |
+      Perform a comprehensive visual audit of the web application at {{ url }}.
+
+      Check the following pages/paths: {{ pages }}
+      Viewport: {{ viewport }}
+
+      For each page:
+      1. Navigate to the page
+      2. Take a full-page screenshot
+      3. Get the accessibility tree snapshot
+      4. Analyze visual quality: layout, typography, color, spacing, component consistency, polish
+      5. Scroll down to see all content - take additional screenshots as needed
+      6. Note any issues with severity ratings (Critical / Major / Minor / Nitpick)
+
+      Provide a complete audit report covering every page.
+
+  - id: summary
+    instruction: |
+      Based on the visual audit results:
+
+      {{ steps.audit.result }}
+
+      Create a concise executive summary:
+      1. Overall quality score (1-10)
+      2. Top 3 issues to fix (highest impact)
+      3. Top 3 things done well
+      4. Recommended next steps prioritized by effort vs impact
