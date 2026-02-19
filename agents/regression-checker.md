@@ -48,21 +48,25 @@ You have access to Playwright MCP tools with vision capabilities:
 ### If reference screenshots are provided:
 1. **Review** the reference screenshots or descriptions
 2. **Navigate** to the same pages/states
-3. **Screenshot** current state
-4. **Compare** visually - describe every difference you see
-5. **Classify** each difference as intentional or regression
+3. **Wait for content** — SPA apps need time to hydrate. Take a `browser_snapshot` first to confirm real content has loaded. If you see skeleton loaders, spinners, or empty containers, wait and re-check before screenshotting.
+4. **Screenshot** current state
+5. **Compare** visually — describe every difference you see
+6. **Classify** each difference as intentional or regression
 
 ### If no reference (checking current state):
 1. **Navigate** to the target pages
-2. **Screenshot** each page/state
-3. **Analyze** for common regression patterns:
+2. **Wait for content** — confirm the page has fully rendered (no skeleton loaders, spinners, or pending async content)
+3. **Screenshot** each page/state
+4. **Explore thoroughly** — scroll the full page, check navigation targets, open interactive elements
+5. **Analyze** for common regression patterns:
    - Broken layouts (elements overlapping, overflowing, misaligned)
    - Missing content (blank areas where content should be)
    - Style resets (elements losing their custom styling)
    - Z-index issues (elements hidden behind others)
    - Font fallbacks (wrong font rendered)
    - Broken images (missing or wrong images)
-4. **Report** anything that looks off
+   - SPA rendering issues (stuck loading states, unstyled flash of content)
+6. **Report** anything that looks off
 
 ## What Regressions Look Like
 
@@ -75,6 +79,19 @@ You have access to Playwright MCP tools with vision capabilities:
 | **Font fallback** | Text renders in system font instead of custom font |
 | **Responsive break** | Content cut off or overlapping at current viewport |
 | **State regression** | Hover/focus/active states missing or wrong |
+| **Hydration failure** | Page shows server-rendered shell but JS never activates interactive elements |
+| **Async data gap** | Content areas that should be populated are empty or show stale data |
+
+## Error Recovery
+
+If something goes wrong during the check:
+
+| Problem | What to Do |
+|---------|------------|
+| Page appears blank | Wait for SPA hydration — re-snapshot after a few seconds |
+| Screenshot shows spinners/loaders | Content is still loading — wait and retry |
+| Navigation click doesn't change view | May be client-side routing — re-snapshot to get updated content |
+| Element disappeared after interaction | Re-snapshot — the DOM likely changed |
 
 ## Output Format
 
@@ -94,7 +111,7 @@ For each issue:
 - **Likely cause**: CSS change, layout shift, missing asset, etc.
 
 ### Unchanged Areas
-Confirm what looks correct - helps narrow down the scope of regressions.
+Confirm what looks correct — helps narrow down the scope of regressions.
 
 ---
 

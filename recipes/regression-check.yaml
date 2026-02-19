@@ -9,6 +9,9 @@ inputs:
   pages:
     description: Comma-separated list of paths to check
     default: "/"
+  viewport:
+    description: Viewport size (e.g., "1280x720", "mobile", "tablet")
+    default: "1280x720"
   context:
     description: What changed recently (e.g., "updated CSS for buttons", "refactored header component")
     default: ""
@@ -20,20 +23,25 @@ steps:
       Check the web application at {{ url }} for visual regressions.
 
       Pages to check: {{ pages }}
+      Viewport: {{ viewport }}
       Recent changes context: {{ context }}
 
       For each page:
       1. Navigate to the page
-      2. Take a screenshot - describe everything you see
-      3. Get the accessibility tree snapshot
-      4. Look for common regression patterns:
+      2. Wait for the page to fully render (check for skeleton loaders, spinners,
+         or loading states before screenshotting — SPA apps need hydration time)
+      3. Take a screenshot - describe everything you see
+      4. Get the accessibility tree snapshot
+      5. Scroll the full page and explore all visible sections
+      6. Look for common regression patterns:
          - Broken layouts (overflow, misalignment, wrapping)
          - Missing styles (unstyled elements, wrong colors)
          - Z-index problems (elements hidden behind others)
          - Font fallbacks (wrong fonts rendering)
          - Broken images or icons
          - State issues (hover/focus/active states wrong)
-      5. If recent changes context was provided, focus especially on areas
+         - SPA rendering issues (stuck loaders, empty content areas)
+      7. If recent changes context was provided, focus especially on areas
          likely affected by those changes
 
       Return PASS (no regressions) or FAIL (regressions found) with details.

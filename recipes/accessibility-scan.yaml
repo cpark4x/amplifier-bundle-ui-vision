@@ -9,6 +9,9 @@ inputs:
   pages:
     description: Comma-separated list of paths to scan
     default: "/"
+  viewport:
+    description: Viewport size (e.g., "1280x720", "mobile", "tablet")
+    default: "1280x720"
   level:
     description: WCAG conformance level to check against (A, AA, AAA)
     default: "AA"
@@ -20,19 +23,24 @@ steps:
       Perform an accessibility scan of the web application at {{ url }}.
 
       Pages to scan: {{ pages }}
+      Viewport: {{ viewport }}
       Target conformance level: WCAG 2.1 {{ level }}
 
       For each page:
       1. Navigate to the page
-      2. Take a screenshot for visual analysis (contrast, sizing, spacing)
-      3. Get the accessibility tree for structural analysis (labels, roles, hierarchy)
-      4. Tab through all interactive elements - note focus order and visibility
-      5. Check against WCAG 2.1 {{ level }} criteria:
+      2. Wait for the page to fully render (check for skeleton loaders, spinners,
+         or loading states — SPA apps need hydration time before the accessibility
+         tree is complete)
+      3. Take a screenshot for visual analysis (contrast, sizing, spacing)
+      4. Get the accessibility tree for structural analysis (labels, roles, hierarchy)
+      5. Tab through all interactive elements - note focus order and visibility
+      6. Scroll the full page to audit all sections, not just above the fold
+      7. Check against WCAG 2.1 {{ level }} criteria:
          - Perceivable: text alternatives, contrast, text resize, non-text contrast
          - Operable: keyboard access, focus order, focus visible
          - Understandable: labels, error identification
          - Robust: proper roles, names, values
-      6. Rate each issue by severity
+      8. Rate each issue by severity
 
       Provide a detailed accessibility report for every page scanned.
 
