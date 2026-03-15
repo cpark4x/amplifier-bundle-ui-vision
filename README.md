@@ -1,5 +1,7 @@
 # amplifier-bundle-ui-vision
 
+**Your tests pass but the UI is broken.** Assertions check data and state — they don't catch the button that shifted 40px left or the text that's clipping behind a card.
+
 AI-powered visual UI testing for [Amplifier](https://github.com/microsoft/amplifier) agents. Uses [Playwright MCP](https://github.com/microsoft/playwright-mcp) with vision capabilities so the model can literally **see** screenshots and analyze your UI.
 
 ## What It Provides
